@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mu-navy: #060D24;
+  --mu-navy-2: #0B1537;
+  --mu-navy-3: #112060;
+  --mu-gold: #C9A84C;
+  --mu-gold-light: #F0D06A;
+  --mu-white: #F7F9FC;
+  --mu-muted: #8892A4;
+  --mu-surface: #EEF2F9;
+  --mu-green: #22C55E;
+  --mu-red: #EF4444;
+  --mu-amber: #F59E0B;
+  --primary: var(--mu-navy);
+  --secondary: var(--mu-navy-3);
+  --accent: var(--mu-gold);
+  --accent-light: var(--mu-gold-light);
+  --surface: var(--mu-surface);
+  --surface-dark: var(--mu-navy-2);
+  --text-primary: #08101f;
+  --text-light: var(--mu-white);
+  --gradient-hero: linear-gradient(135deg, #060D24 0%, #0B1537 48%, #112060 100%);
+  --glass: rgba(11, 21, 55, 0.7);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark {
+  --surface: #060D24;
+  --surface-dark: #0B1537;
+  --text-primary: #F7F9FC;
+}
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply m-0 bg-[var(--surface)] text-[var(--text-primary)];
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  a {
+    @apply no-underline;
+  }
+}
+
+.mesh-background {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(201, 168, 76, 0.18), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.12), transparent 24%),
+    radial-gradient(circle at 60% 80%, rgba(240, 208, 128, 0.14), transparent 26%);
+  animation: meshMove 18s ease-in-out infinite alternate;
+}
+
+.floating-orb {
+  animation: float 12s ease-in-out infinite;
+}
+
+.orb-1 { height: 7rem; width: 7rem; left: 10%; top: 18%; }
+.orb-2 { height: 5rem; width: 5rem; left: 18%; bottom: 16%; animation-delay: 1s; }
+.orb-3 { height: 9rem; width: 9rem; right: 12%; top: 22%; animation-delay: 2s; }
+.orb-4 { height: 4rem; width: 4rem; right: 22%; bottom: 12%; animation-delay: 3s; }
+.orb-5 { height: 6rem; width: 6rem; left: 42%; top: 12%; animation-delay: 4s; }
+.orb-6 { height: 3rem; width: 3rem; right: 34%; top: 56%; animation-delay: 5s; }
+.orb-7 { height: 4.5rem; width: 4.5rem; left: 62%; bottom: 8%; animation-delay: 1.5s; }
+.orb-8 { height: 2.5rem; width: 2.5rem; left: 72%; top: 18%; animation-delay: 2.5s; }
+
+.animate-marquee {
+  animation: marquee 24s linear infinite;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.animate-shake {
+  animation: shake 0.35s ease-in-out;
+}
+
+@keyframes meshMove {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(0, -12px, 0) scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+

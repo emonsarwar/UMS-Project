@@ -1,0 +1,331 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  role          Role
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  student       Student?
+  teacher       Teacher?
+  admin         Admin?
+  refreshTokens RefreshToken[]
+}
+
+model Student {
+  id               String          @id @default(cuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id])
+  studentId        String          @unique
+  fullName         String
+  photo            String?
+  phone            String?
+  address          String?
+  guardianName     String?
+  guardianPhone    String?
+  departmentId     String
+  department       Department      @relation(fields: [departmentId], references: [id])
+  semester         Int
+  session          String
+  enrollments      Enrollment[]
+  attendances      Attendance[]
+  results          Result[]
+  feeRecords       FeeRecord[]
+  transportRoute   TransportRoute? @relation(fields: [transportRouteId], references: [id])
+  transportRouteId String?
+}
+
+model Teacher {
+  id           String             @id @default(cuid())
+  userId       String             @unique
+  user         User               @relation(fields: [userId], references: [id])
+  teacherId    String             @unique
+  fullName     String
+  photo        String?
+  phone        String?
+  designation  String
+  departmentId String
+  department   Department         @relation(fields: [departmentId], references: [id])
+  courses      CourseAssignment[]
+  researchArea String?
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id])
+  fullName String
+  role     String
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  name        String
+  shortName   String
+  school      String
+  headName    String?
+  description String?
+  icon        String?
+  students    Student[]
+  teachers    Teacher[]
+  courses     Course[]
+}
+
+model Course {
+  id           String             @id @default(cuid())
+  code         String             @unique
+  title        String
+  credits      Float
+  departmentId String
+  department   Department         @relation(fields: [departmentId], references: [id])
+  semester     Int
+  description  String?
+  assignments  CourseAssignment[]
+  enrollments  Enrollment[]
+  attendances  Attendance[]
+  results      Result[]
+}
+
+model CourseAssignment {
+  id        String  @id @default(cuid())
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  courseId  String
+  course    Course  @relation(fields: [courseId], references: [id])
+  session   String
+  section   String
+}
+
+model Enrollment {
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  courseId  String
+  course    Course  @relation(fields: [courseId], references: [id])
+  session   String
+  status    String  @default("active")
+
+  @@unique([studentId, courseId, session])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  date      DateTime
+  status    String
+  markedBy  String
+}
+
+model Result {
+  id            String   @id @default(cuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id])
+  courseId      String
+  course        Course   @relation(fields: [courseId], references: [id])
+  session       String
+  examType      String
+  marksObtained Float
+  totalMarks    Float
+  grade         String?
+  gradePoint    Float?
+  publishedAt   DateTime?
+  isPublished   Boolean  @default(false)
+}
+
+model FeeRecord {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id])
+  session    String
+  feeType    String
+  amount     Float
+  dueDate    DateTime
+  paidAmount Float    @default(0)
+  paidAt     DateTime?
+  status     String   @default("pending")
+  receiptNo  String?
+}
+
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String
+  targetRole  String
+  targetDept  String?
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+}
+
+model TransportRoute {
+  id        String    @id @default(cuid())
+  routeName String
+  stops     String[]
+  departure String
+  busNumber String
+  driver    String
+  capacity  Int
+  students  Student[]
+  vehicles  Vehicle[]
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String
+  coverImage  String?
+  category    String
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  venue       String
+  startDate   DateTime
+  endDate     DateTime
+  coverImage  String?
+  category    String
+  isPublished Boolean  @default(true)
+}
+
+model GalleryImage {
+  id         String   @id @default(cuid())
+  url        String
+  caption    String?
+  category   String
+  takenAt    DateTime?
+  uploadedAt DateTime @default(now())
+}
+
+model AdmissionApplication {
+  id          String   @id @default(cuid())
+  fullName    String
+  email       String
+  phone       String
+  programme   String
+  department  String
+  session     String
+  documents   String[]
+  status      String   @default("pending")
+  submittedAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+}
+
+model BookCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  books       Book[]
+  createdAt   DateTime @default(now())
+}
+
+model Author {
+  id        String @id @default(cuid())
+  name      String
+  bio       String?
+  authorBooks AuthorBook[]
+  createdAt DateTime @default(now())
+
+  @@unique([name])
+}
+
+model AuthorBook {
+  authorId String
+  bookId   String
+  author   Author @relation(fields: [authorId], references: [id])
+  book     Book   @relation(fields: [bookId], references: [id])
+
+  @@id([authorId, bookId])
+}
+
+model Book {
+  id              String        @id @default(cuid())
+  title           String
+  isbn            String        @unique(map: "Book_isbn_key")
+  edition         String?
+  totalQuantity   Int
+  availableQuantity Int
+  publicationYear Int?
+  description     String?
+  coverImage      String?
+  categoryId      String
+  category        BookCategory  @relation(fields: [categoryId], references: [id])
+  authorBooks     AuthorBook[]
+  issueRecords    IssueRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IssueRecord {
+  id          String      @id @default(cuid())
+  bookId      String
+  book        Book        @relation(fields: [bookId], references: [id])
+  memberId    String
+  memberType  String      // "STUDENT" | "TEACHER"
+  issueDate   DateTime    @default(now())
+  dueDate     DateTime
+  returnDate  DateTime?
+  fine        Float       @default(0)
+  status      String      @default("ISSUED") // ISSUED | RETURNED | OVERDUE | RESERVED
+
+  createdAt   DateTime    @default(now())
+
+  @@unique([bookId, memberId, issueDate])
+}
+
+model Vehicle {
+  id          String         @id @default(cuid())
+  number      String         @unique
+  driverName  String
+  capacity    Int
+  routeId     String?
+  route       TransportRoute? @relation(fields: [routeId], references: [id])
+  locationLogs LocationLog[]
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model LocationLog {
+  id        String   @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  latitude  Float
+  longitude Float
+  timestamp DateTime @default(now())
+}
+

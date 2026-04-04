@@ -1,0 +1,1 @@
+d:/nnn/backend/node_modules/@embedded-postgres/windows-x64/native/bin/postgres.exe "-D" "D:\nnn\.embedded-postgres" "-p" "5432"
