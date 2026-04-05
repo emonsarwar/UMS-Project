@@ -24,6 +24,10 @@ model User {
   teacher       Teacher?
   admin         Admin?
   refreshTokens RefreshToken[]
+  notifications Notification[]
+  sentMessages  Message[]      @relation("SentMessages")
+  receivedMessages Message[]   @relation("ReceivedMessages")
+  settings      UserSettings?
 }
 
 model Student {
@@ -45,6 +49,7 @@ model Student {
   attendances      Attendance[]
   results          Result[]
   feeRecords       FeeRecord[]
+  submissions      Submission[]
   transportRoute   TransportRoute? @relation(fields: [transportRouteId], references: [id])
   transportRouteId String?
 }
@@ -61,6 +66,7 @@ model Teacher {
   departmentId String
   department   Department         @relation(fields: [departmentId], references: [id])
   courses      CourseAssignment[]
+  timetableSlots TimetableSlot[]
   researchArea String?
 }
 
@@ -94,10 +100,13 @@ model Course {
   department   Department         @relation(fields: [departmentId], references: [id])
   semester     Int
   description  String?
-  assignments  CourseAssignment[]
+  courseAssignments CourseAssignment[]
   enrollments  Enrollment[]
   attendances  Attendance[]
   results      Result[]
+  assignments  Assignment[]
+  exams        Exam[]
+  timetableSlots TimetableSlot[]
 }
 
 model CourseAssignment {
@@ -161,6 +170,7 @@ model FeeRecord {
   paidAt     DateTime?
   status     String   @default("pending")
   receiptNo  String?
+  payments   Payment[]
 }
 
 model Notice {
@@ -327,5 +337,109 @@ model LocationLog {
   latitude  Float
   longitude Float
   timestamp DateTime @default(now())
+}
+
+model Notification {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String  // "fee_due", "assignment", "attendance", "message"
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  senderId    String
+  receiverId  String
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  content     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([senderId, receiverId])
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id])
+  title       String
+  description String?
+  fileUrl     String?
+  maxMarks    Float
+  dueDate     DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  submissions Submission[]
+}
+
+model Exam {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id])
+  title       String
+  dateTime    DateTime
+  duration    Int      // minutes
+  type        String   // "midterm", "final", "quiz"
+  maxMarks    Float
+  createdBy   String
+  createdAt   DateTime @default(now())
+}
+
+model TimetableSlot {
+  id        String  @id @default(cuid())
+  courseId  String
+  course    Course  @relation(fields: [courseId], references: [id])
+  day       String  // "Monday", "Tuesday"
+  startTime String  // "09:00"
+  endTime   String  // "10:30"
+  room      String
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  session   String
+  section   String?
+}
+
+model Submission {
+  id          String      @id @default(cuid())
+  assignmentId String
+  assignment  Assignment  @relation(fields: [assignmentId], references: [id])
+  studentId   String
+  student     Student     @relation(fields: [studentId], references: [id])
+  fileUrl     String?
+  submittedAt DateTime    @default(now())
+  marks       Float?
+  feedback    String?
+  status      String      @default("submitted")
+
+  @@unique([assignmentId, studentId])
+}
+
+model Payment {
+  id           String    @id @default(cuid())
+  feeRecordId  String
+  feeRecord    FeeRecord @relation(fields: [feeRecordId], references: [id])
+  amount       Float
+  method       String    // "bkash", "card", "cash"
+  status       String    @default("pending")
+  transactionRef String?
+  paidAt       DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+model UserSettings {
+  id          String @id @default(cuid())
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id])
+  theme       String @default("light")
+  notifications Boolean @default(true)
+  language    String @default("en")
+  updatedAt   DateTime @updatedAt
 }
 

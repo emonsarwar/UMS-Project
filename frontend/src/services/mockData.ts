@@ -113,7 +113,7 @@ export const students: Student[] = Array.from({ length: 20 }, (_, index) => {
     attendance: 74 + (index % 10),
     pendingFees: index % 4 === 0 ? 1200 : 0,
     registeredCourses: 4 + (index % 2),
-    transportRoute: ['North Loop', 'River Side', 'City Center'][index % 3],
+    transportRoute: ['Temuki', 'River Side', 'City Center'][index % 3],
     phone: `+1-303-555-${String(1100 + index).slice(-4)}`,
     avatar: name,
   }

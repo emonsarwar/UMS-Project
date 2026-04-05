@@ -4,8 +4,8 @@ import DataTable from '../../components/ui/DataTable'
 import { students } from '../../services/muMockData'
 
 const routes = [
-  { id: 'R1', route: 'North Loop', bus: 'PU-12', capacity: 42, driver: 'Michael Carter', schedule: '07:10 AM' },
-  { id: 'R2', route: 'City Center', bus: 'PU-18', capacity: 36, driver: 'Olivia Reed', schedule: '07:35 AM' },
+  { id: 'R1', route: 'Temuki', bus: 'MU-12', capacity: 42, driver: 'Farid Alom', schedule: '07:10 AM' },
+  { id: 'R2', route: 'City Center', bus: 'MU-18', capacity: 36, driver: 'Sajib Mia', schedule: '07:35 AM' },
 ]
 
 const ManageTransport = () => {
