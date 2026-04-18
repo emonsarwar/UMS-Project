@@ -1,6 +1,6 @@
-# NNN - Educational Management System
+# University Management System
 
-A full-stack educational management system with a modern **React + Tailwind CSS frontend** and **Node.js + Express backend**.
+A full-stack university management system with a modern **React + Tailwind CSS frontend** and **Node.js + Express backend**.
 
 ## 📁 Project Structure
 
