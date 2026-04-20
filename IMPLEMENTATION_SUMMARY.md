@@ -140,7 +140,7 @@ npm run test:coverage
 ## 📁 Project Structure
 
 ```
-nnn-monorepo/
+monorepo/
 ├── backend/
 │   └── src/modules/*/
 │       ├── *.service.ts      (Business logic)
@@ -271,5 +271,3 @@ nnn-monorepo/
 ✅ Documentation complete
 
 ---
-
-Made with ❤️ by Senior Frontend Developer
