@@ -7,7 +7,7 @@ A full-stack university management system with a modern **React + Tailwind CSS f
 This is a **monorepo** project organized as follows:
 
 ```
-nnn-monorepo/
+monorepo/
 ├── frontend/                # React + Vite frontend application
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
